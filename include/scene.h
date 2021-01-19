@@ -21,6 +21,8 @@ typedef struct {
 
 typedef struct{
     float distance;
+    int cell_type;
+    vec2 cell;
 }raycast_hit;
 
 scene* scene_create(int w, int h);

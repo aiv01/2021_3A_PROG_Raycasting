@@ -6,10 +6,14 @@
 typedef struct{
     vec2 pos;
     vec2 dir;
+    float fov_angle;
+    vec2 plane_dir;
+    float fov_tan;
 } camera;
 
 typedef struct {
     camera* camera;
+    const int* map;
 } scene;
 
 

@@ -1,4 +1,6 @@
 #include "scene.h"
+#include <math.h>
+
 
 const int world_map[20][20] = {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
@@ -24,15 +26,19 @@ const int world_map[20][20] = {
 };
 
 scene* scene_create(int screen_width, int screen_height) {
-    //map
-
-
     scene* s = malloc(sizeof(scene));
-    //camera pos - direction
-    camera* c = malloc(sizeof(camera));
-    //c->dir = vec2_new()
-    //s->.camera = c;
-    //FoV
+    s->map = world_map;
+
+    s->camera = malloc(sizeof(camera));
+    s->camera->pos = vec2_new(1, 1);
+    s->camera->dir = vec2_new(1, 0);
+    s->camera->fov_angle = 60.f;
+    s->camera->plane_dir = vec2_new(0, 1);
+    float half_fov_rads = ((s->camera->fov_angle*0.5f)*M_PI) / 180.f;
+    s->camera->fov_tan = tanf(half_fov_rads);
+
+
+    return s;
 }
 
 void scene_update(scene* s, SDL_Renderer* r, float delta_time) {

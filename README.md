@@ -1,3 +1,5 @@
+Raycasting implementation for Programming course - 3rd year.
+
 # IDE
 # VSCode 
 Basic setup for VS Code ide.

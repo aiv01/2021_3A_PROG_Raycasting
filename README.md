@@ -19,6 +19,7 @@ Configure under `.vscode/` the folliwing files:
     "cmake.configureSettings": { 
         "CMAKE_MODULE_PATH": "${workspaceFolder}/cmake/",
         "SDL2_PATH": "${workspaceFolder}/cmake/sdl2/",
+        "SDL2_IMAGE_PATH" : "${workspaceFolder}/cmake/sdl2_image/"
     },
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
 }

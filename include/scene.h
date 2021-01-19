@@ -14,8 +14,14 @@ typedef struct{
 typedef struct {
     camera* camera;
     const int* map;
+    int screen_width;
+    int screen_height;
+
 } scene;
 
+typedef struct{
+    float distance;
+}raycast_hit;
 
 scene* scene_create(int w, int h);
 void scene_update(scene*, SDL_Renderer* renderer, float delta_time);

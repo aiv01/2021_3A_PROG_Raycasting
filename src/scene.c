@@ -145,6 +145,17 @@ void handle_input(scene* s, float delta_time){
         vec2 move = vec2_scale(&s->camera->dir, 10.f * delta_time);
         s->camera->pos = vec2_sum(&s->camera->pos, &move);
     }
+
+        //cos(a) * x1 - sin(a) * y1
+        //sin(a) * x1 + cos (a) * y1
+    if(state[SDL_SCANCODE_RIGHT]){
+        s->camera->dir = vec2_rotate(&s->camera->dir, -10.0f * delta_time);
+        s->camera->plane_dir = vec2_rotate(&s->camera->plane_dir, -10.0f * delta_time);
+    }
+    else if(state[SDL_SCANCODE_LEFT]){
+        s->camera->dir = vec2_rotate(&s->camera->dir, 10.0f * delta_time);
+        s->camera->plane_dir = vec2_rotate(&s->camera->plane_dir, 10.0f * delta_time);
+    }
 }
 
 void scene_destroy(scene *s)

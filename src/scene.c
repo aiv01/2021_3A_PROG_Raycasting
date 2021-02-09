@@ -34,7 +34,7 @@ scene *scene_create(int screen_width, int screen_height)
     s->camera->dir = vec2_new(1, 0);
     s->camera->fov_angle = 60.f;
     s->camera->plane_dir = vec2_new(0, 1);
-    float half_fov_rads = ((s->camera->fov_angle * 0.5f) * M_PI) / 180.f;
+    float half_fov_rads = (float)((s->camera->fov_angle * 0.5f) * M_PI) / 180.f;
     s->camera->fov_tan = tanf(half_fov_rads);
 
     s->screen_height = screen_height;
@@ -50,8 +50,8 @@ void ray_cast(vec2 *origin, vec2 *ray, scene* s, raycast_hit *out_ray_hit)
     int cell_x = (int)pos_x;
     int cell_y = (int)pos_y;
 
-    float delta_x = sqrt(1 + (ray->y * ray->y) / (ray->x * ray->x));
-    float delta_y = sqrt(1 + (ray->x * ray->x) / (ray->y * ray->y));
+    float delta_x = sqrtf(1 + (ray->y * ray->y) / (ray->x * ray->x));
+    float delta_y = sqrtf(1 + (ray->x * ray->x) / (ray->y * ray->y));
 
     float ray_length_x;
     float ray_length_y;
@@ -96,8 +96,8 @@ void ray_cast(vec2 *origin, vec2 *ray, scene* s, raycast_hit *out_ray_hit)
     }
 
     out_ray_hit->cell_type = s->map[cell_y * 20 + cell_x];
-    out_ray_hit->cell = vec2_new(cell_x, cell_y);
-    out_ray_hit->distance = sqrt(ray_length_x * ray_length_x + ray_length_y * ray_length_y); 
+    out_ray_hit->cell = vec2_new((float)cell_x, (float)cell_y);
+    out_ray_hit->distance = sqrtf(ray_length_x * ray_length_x + ray_length_y * ray_length_y); 
 }
 
 void scene_update(scene *s, SDL_Renderer *r, float delta_time)

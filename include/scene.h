@@ -29,4 +29,7 @@ scene* scene_create(int w, int h);
 void scene_update(scene*, SDL_Renderer* renderer, float delta_time);
 void scene_destroy(scene*);
 
+void draw_column(raycast_hit *ray, scene *s, SDL_Renderer *r, int col);
+void choose_color(int type, SDL_Renderer *r);
+
 #endif //SCENE_H

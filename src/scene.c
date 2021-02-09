@@ -113,9 +113,28 @@ void scene_update(scene *s, SDL_Renderer *r, float delta_time)
         vec2 ray = vec2_new(ray_dir_x, ray_dir_y);
         raycast_hit hit;
         ray_cast(&s->camera->pos, &ray, s, &hit);
+        draw_column(&hit, s, r, col);
+    }
+}
+
+void draw_column(raycast_hit *ray, scene *s, SDL_Renderer *r, int col)
+{
+    int col_height = (int)((float)s->screen_height / ray->distance);
+    int start = s->screen_height/2 - col_height/2;
+    int end = start + col_height;
+    choose_color(ray->cell_type, r);
+    SDL_RenderDrawLine(r, col, start, col, end);
+}
+
+void choose_color(int type, SDL_Renderer *r)
+{
+    if(type == 1)
+    {
+        SDL_SetRenderDrawColor(r, 255, 0, 0, 255);
     }
 }
 
 void scene_destroy(scene *s)
 {
+
 }

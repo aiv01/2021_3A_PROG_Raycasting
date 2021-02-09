@@ -30,6 +30,9 @@ vec2 vec2_scale(vec2* v1, float n){
 
 vec2 vec2_rotate(vec2* v1, float angle_degrees)
 {
+    
+    //cos(a) * x1 - sin(a) * y1
+    //sin(a) * x1 + cos (a) * y1
     vec2 rotated;
     rotated.x = cosf(angle_degrees) * v1->x - sinf(angle_degrees) * v1->y;
     rotated.y = sinf(angle_degrees) * v1->x + cosf(angle_degrees) * v1->y;

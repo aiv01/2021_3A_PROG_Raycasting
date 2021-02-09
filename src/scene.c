@@ -59,26 +59,26 @@ void ray_cast(vec2 *origin, vec2 *ray, scene* s, raycast_hit *out_ray_hit)
     int cell_incr_x;
     int cell_incr_y;
 
-    if (ray->x > 0)
+    if (ray->x < 0)
     {
-        ray_length_x = (pos_x - cell_x) * delta_x;
-        cell_incr_x = 1;
-    }
-    else
-    {
-        ray_length_x = (cell_x + 1 - pos_x) * delta_x;
+        ray_length_x = (pos_x - (float)cell_x) * delta_x;
         cell_incr_x = -1;
     }
-
-    if (ray->y > 0)
+    else
     {
-        ray_length_y = (cell_y + 1 - pos_y) * delta_y;
-        cell_incr_y = 1;
+        ray_length_x = ( (float)cell_x + 1.f - (float)pos_x) * delta_x;
+        cell_incr_x = 1;
+    }
+
+    if (ray->y < 0)
+    {
+        ray_length_y = (pos_y - (float)cell_y) * delta_y;
+        cell_incr_y = -1;
     }
     else
     {
-        ray_length_y = (pos_y - cell_y) * delta_y;
-        cell_incr_y = -1;
+        ray_length_y = ((float)cell_y + 1.f - pos_y) * delta_y;
+        cell_incr_y = 1;
     }
 
     while(s->map[cell_y * 20 + cell_x] == 0)
@@ -113,6 +113,8 @@ void scene_update(scene *s, SDL_Renderer *r, float delta_time)
 
         vec2 ray = vec2_new(ray_dir_x, ray_dir_y);
         raycast_hit hit;
+        //hit.cell_type = 1;
+        //hit.distance = 2;
         ray_cast(&s->camera->pos, &ray, s, &hit);
         draw_column(&hit, s, r, col);
     }
@@ -136,25 +138,26 @@ void choose_color(int type, SDL_Renderer *r)
 }
 
 void handle_input(scene* s, float delta_time){
+    float speed = 10.f;
+    float rotation_speed = 1.f;
+
     Uint8* state = SDL_GetKeyboardState(NULL);
     if(state[SDL_SCANCODE_DOWN]){
-        vec2 move = vec2_scale(&s->camera->dir, 10.f * delta_time);
+        vec2 move = vec2_scale(&s->camera->dir, speed * delta_time);
         s->camera->pos = vec2_sub(&s->camera->pos, &move);
     }
     else if(state[SDL_SCANCODE_UP]){
-        vec2 move = vec2_scale(&s->camera->dir, 10.f * delta_time);
+        vec2 move = vec2_scale(&s->camera->dir, speed * delta_time);
         s->camera->pos = vec2_sum(&s->camera->pos, &move);
     }
 
-        //cos(a) * x1 - sin(a) * y1
-        //sin(a) * x1 + cos (a) * y1
     if(state[SDL_SCANCODE_RIGHT]){
-        s->camera->dir = vec2_rotate(&s->camera->dir, -10.0f * delta_time);
-        s->camera->plane_dir = vec2_rotate(&s->camera->plane_dir, -10.0f * delta_time);
+        s->camera->dir = vec2_rotate(&s->camera->dir, -rotation_speed * delta_time);
+        s->camera->plane_dir = vec2_rotate(&s->camera->plane_dir, -rotation_speed * delta_time);
     }
     else if(state[SDL_SCANCODE_LEFT]){
-        s->camera->dir = vec2_rotate(&s->camera->dir, 10.0f * delta_time);
-        s->camera->plane_dir = vec2_rotate(&s->camera->plane_dir, 10.0f * delta_time);
+        s->camera->dir = vec2_rotate(&s->camera->dir, rotation_speed * delta_time);
+        s->camera->plane_dir = vec2_rotate(&s->camera->plane_dir, rotation_speed * delta_time);
     }
 }
 

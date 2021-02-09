@@ -30,7 +30,7 @@ scene *scene_create(int screen_width, int screen_height)
     s->map = (int*)world_map;
 
     s->camera = malloc(sizeof(camera));
-    s->camera->pos = vec2_new(1, 1);
+    s->camera->pos = vec2_new(1, 2);
     s->camera->dir = vec2_new(1.f, 0);
     s->camera->fov_angle = 60.f;
     s->camera->plane_dir = vec2_new(0, 1.f);
@@ -81,7 +81,7 @@ void ray_cast(vec2 *origin, vec2 *ray, scene* s, raycast_hit *out_ray_hit)
         ray_length_y = ((float)cell_y + 1.f - pos_y) * delta_y;
     }
 
-    int hit_side; //0 NORTH_SOUTH  1 EAST_WEST
+    int hit_side = 0; //0 NORTH_SOUTH  1 EAST_WEST
     while(s->map[cell_y * 20 + cell_x] == 0)
     {
         if(ray_length_x < ray_length_y)
@@ -101,11 +101,10 @@ void ray_cast(vec2 *origin, vec2 *ray, scene* s, raycast_hit *out_ray_hit)
     out_ray_hit->cell_type = s->map[cell_y * 20 + cell_x];
     out_ray_hit->cell = vec2_new((float)cell_x, (float)cell_y);
     // Euclidean Distance gives fish eye effects
-    out_ray_hit->distance = sqrtf(ray_length_x * ray_length_x + ray_length_y * ray_length_y);
+    //out_ray_hit->distance = sqrtf(ray_length_x * ray_length_x + ray_length_y * ray_length_y);
     
-    /*
+    
     float pos_to_wall_distance;
-
     //NORTH
     if (hit_side == 0) {
         //(1 - cell_incr_x) / 2 => [0, 1]
@@ -114,7 +113,6 @@ void ray_cast(vec2 *origin, vec2 *ray, scene* s, raycast_hit *out_ray_hit)
         pos_to_wall_distance = ((float)cell_y - pos_y + (float)(1 - cell_incr_y) / 2.f ) / ray->y;
     }
     out_ray_hit->distance = pos_to_wall_distance;
-    */
 }
 
 void scene_update(scene *s, SDL_Renderer *r, float delta_time)
@@ -125,13 +123,17 @@ void scene_update(scene *s, SDL_Renderer *r, float delta_time)
     {
         float col_mapped = delta * col - 1.f;
 
+        /* BUG: Erronamente moltiplicavamo per l'angolo del fov, invece che per la tangente.
+                Quindi il raggio che castiamo aveva sicuramente direzione errata
         float ray_dir_x = s->camera->dir.x + s->camera->plane_dir.x * col_mapped * s->camera->fov_angle;
         float ray_dir_y = s->camera->dir.y + s->camera->plane_dir.y * col_mapped * s->camera->fov_angle;
+         */
+
+        float ray_dir_x = s->camera->dir.x + s->camera->plane_dir.x * col_mapped * s->camera->fov_tan;
+        float ray_dir_y = s->camera->dir.y + s->camera->plane_dir.y * col_mapped * s->camera->fov_tan;
 
         vec2 ray = vec2_new(ray_dir_x, ray_dir_y);
         raycast_hit hit;
-        //hit.cell_type = 1;
-        //hit.distance = 2;
         ray_cast(&s->camera->pos, &ray, s, &hit);
         draw_column(&hit, s, r, col);
     }
@@ -158,7 +160,7 @@ void choose_color(int type, SDL_Renderer *r)
 
 void handle_input(scene* s, float delta_time){
     float speed = 10.f;
-    float rotation_speed = 5.f;
+    float rotation_speed = 60.f;
 
     Uint8* state = SDL_GetKeyboardState(NULL);
     if(state[SDL_SCANCODE_DOWN]){
@@ -171,12 +173,12 @@ void handle_input(scene* s, float delta_time){
     }
 
     if(state[SDL_SCANCODE_RIGHT]){
-        s->camera->dir = vec2_rotate(&s->camera->dir, -rotation_speed * delta_time);
-        s->camera->plane_dir = vec2_rotate(&s->camera->plane_dir, -rotation_speed * delta_time);
-    }
-    else if(state[SDL_SCANCODE_LEFT]){
         s->camera->dir = vec2_rotate(&s->camera->dir, rotation_speed * delta_time);
         s->camera->plane_dir = vec2_rotate(&s->camera->plane_dir, rotation_speed * delta_time);
+    }
+    else if(state[SDL_SCANCODE_LEFT]){
+        s->camera->dir = vec2_rotate(&s->camera->dir, -rotation_speed * delta_time);
+        s->camera->plane_dir = vec2_rotate(&s->camera->plane_dir, -rotation_speed * delta_time);
     }
 }
 

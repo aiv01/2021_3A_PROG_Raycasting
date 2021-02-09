@@ -32,4 +32,6 @@ void scene_destroy(scene*);
 void draw_column(raycast_hit *ray, scene *s, SDL_Renderer *r, int col);
 void choose_color(int type, SDL_Renderer *r);
 
+void handle_input(scene* s, float delta_time);
+
 #endif //SCENE_H

@@ -102,6 +102,7 @@ void ray_cast(vec2 *origin, vec2 *ray, scene* s, raycast_hit *out_ray_hit)
 
 void scene_update(scene *s, SDL_Renderer *r, float delta_time)
 {
+    handle_input(s, delta_time);
     float delta = 2.f / s->screen_width;
     for (int col = 0; col < s->screen_width; col++)
     {
@@ -131,6 +132,18 @@ void choose_color(int type, SDL_Renderer *r)
     if(type == 1)
     {
         SDL_SetRenderDrawColor(r, 255, 0, 0, 255);
+    }
+}
+
+void handle_input(scene* s, float delta_time){
+    Uint8* state = SDL_GetKeyboardState(NULL);
+    if(state[SDL_SCANCODE_DOWN]){
+        vec2 move = vec2_scale(&s->camera->dir, 10.f * delta_time);
+        s->camera->pos = vec2_sub(&s->camera->pos, &move);
+    }
+    else if(state[SDL_SCANCODE_UP]){
+        vec2 move = vec2_scale(&s->camera->dir, 10.f * delta_time);
+        s->camera->pos = vec2_sum(&s->camera->pos, &move);
     }
 }
 
